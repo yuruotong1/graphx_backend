@@ -1,0 +1,9 @@
+STRING=1
+LINE=2
+ARROW=3
+COLON=4
+NEWLINE=5
+WS=6
+'-'=2
+'>'=3
+':'=4
