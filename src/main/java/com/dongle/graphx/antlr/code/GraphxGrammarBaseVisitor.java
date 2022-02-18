@@ -20,6 +20,17 @@ public class GraphxGrammarBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override
+    public T visitNode(GraphxGrammarParser.NodeContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override
     public T visitStatExpr(GraphxGrammarParser.StatExprContext ctx) {
         return visitChildren(ctx);
     }

@@ -3,7 +3,8 @@ grammar GraphxGrammar;
 package com.dongle.graphx.antlr.code;
 }
 
-stat    : expr (NEWLINE+ expr)* NEWLINE* #statExpr
+stat    : STRING   # node
+        | expr (NEWLINE+ expr)* NEWLINE* #statExpr
         | NEWLINE+  #statNewLine;
 
 expr    :STRING line STRING (line STRING)*;

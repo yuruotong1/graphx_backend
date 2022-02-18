@@ -1,12 +1,7 @@
 package com.dongle.graphx.antlr.code;
 
+import com.alibaba.fastjson.JSONArray;
 import com.dongle.graphx.antlr.GraphxVisitor;
-import guru.nidi.graphviz.attribute.Arrow;
-import guru.nidi.graphviz.attribute.Label;
-import guru.nidi.graphviz.attribute.Shape;
-import guru.nidi.graphviz.engine.Format;
-import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.engine.GraphvizCmdLineEngine;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -14,13 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-
-import static com.dongle.graphx.utils.ConvertSvg2Png.convertHttpSvg2Png;
-import static guru.nidi.graphviz.model.Factory.graph;
-import static guru.nidi.graphviz.model.Factory.node;
-import static guru.nidi.graphviz.model.Link.to;
 
 
 @SpringBootTest
@@ -32,7 +20,7 @@ public class TestGraphxGrammar {
         GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
         GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));
         GraphxGrammarParser.StatContext tree = parser.stat();
-        GraphxVisitor eval = new GraphxVisitor();
+        GraphxVisitor eval = new GraphxVisitor(new JSONArray());
         ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream) eval.visit(tree);
 
     }

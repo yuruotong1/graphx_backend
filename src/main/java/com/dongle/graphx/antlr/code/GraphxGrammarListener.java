@@ -10,6 +10,22 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface GraphxGrammarListener extends ParseTreeListener {
     /**
+     * Enter a parse tree produced by the {@code node}
+     * labeled alternative in {@link GraphxGrammarParser#stat}.
+     *
+     * @param ctx the parse tree
+     */
+    void enterNode(GraphxGrammarParser.NodeContext ctx);
+
+    /**
+     * Exit a parse tree produced by the {@code node}
+     * labeled alternative in {@link GraphxGrammarParser#stat}.
+     *
+     * @param ctx the parse tree
+     */
+    void exitNode(GraphxGrammarParser.NodeContext ctx);
+
+    /**
      * Enter a parse tree produced by the {@code statExpr}
      * labeled alternative in {@link GraphxGrammarParser#stat}.
      *

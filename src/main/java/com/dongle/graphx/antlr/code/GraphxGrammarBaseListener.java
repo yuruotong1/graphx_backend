@@ -19,6 +19,24 @@ public class GraphxGrammarBaseListener implements GraphxGrammarListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override
+    public void enterNode(GraphxGrammarParser.NodeContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitNode(GraphxGrammarParser.NodeContext ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
     public void enterStatExpr(GraphxGrammarParser.StatExprContext ctx) {
     }
 

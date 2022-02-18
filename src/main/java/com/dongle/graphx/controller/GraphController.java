@@ -5,25 +5,26 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dongle.graphx.Domain.Edge;
 import com.dongle.graphx.Domain.Node;
-import com.dongle.graphx.Domain.RequestData;
 import com.dongle.graphx.antlr.GraphxVisitor;
 import com.dongle.graphx.antlr.code.GraphxGrammarLexer;
 import com.dongle.graphx.antlr.code.GraphxGrammarParser;
-import com.dongle.graphx.utils.*;
+import com.dongle.graphx.utils.Command;
+import com.dongle.graphx.utils.Constant;
+import com.dongle.graphx.utils.LogUtil;
+import com.dongle.graphx.utils.TempFile;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.dongle.graphx.utils.ConvertSvg2Png.convertHttpSvg2Png;
@@ -36,14 +37,20 @@ public class GraphController {
 
     @RequestMapping("/parse")
     @PostMapping
-    public Map<?, ?> getParseResult(@RequestBody RequestData requestData) {
-        CharStream codePointCharStream = CharStreams.fromString(requestData.getData());
+    public Map<?, ?> getParseResult(@RequestBody String requestDataString) {
+        JSONObject requestDataObj = JSON.parseObject(requestDataString);
+        String rawData = (String) requestDataObj.get(Constant.RAWDATA);
+        LogUtil.info(LOGGER, "receive data", requestDataObj.toJSONString());
+        CharStream codePointCharStream = CharStreams.fromString(rawData);
         GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
         GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));
         GraphxGrammarParser.StatContext tree = parser.stat();
-        GraphxVisitor eval = new GraphxVisitor();
+        JSONObject requestGraphData = requestDataObj.getJSONObject(Constant.GRAPH_DATA);
+        JSONArray requestNodes = (JSONArray) requestGraphData.get(Constant.NODE_LIST);
+        GraphxVisitor eval = new GraphxVisitor(requestNodes);
         return (Map<?, ?>) eval.visit(tree);
     }
+
 
     @RequestMapping(value = "/getPng", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public void getPargh(@RequestBody String requestDataString, HttpServletResponse response) {
