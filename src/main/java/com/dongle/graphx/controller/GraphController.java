@@ -37,7 +37,7 @@ public class GraphController {
 
     @RequestMapping("/parse")
     @PostMapping
-    public Map<?, ?> getParseResult(@RequestBody String requestDataString) {
+    public JSONObject getParseResult(@RequestBody String requestDataString) {
         JSONObject requestDataObj = JSON.parseObject(requestDataString);
         String rawData = (String) requestDataObj.get(Constant.RAWDATA);
         LogUtil.info(LOGGER, "receive data", requestDataObj.toJSONString());
@@ -45,10 +45,26 @@ public class GraphController {
         GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
         GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));
         GraphxGrammarParser.StatContext tree = parser.stat();
-        JSONObject requestGraphData = requestDataObj.getJSONObject(Constant.GRAPH_DATA);
+        JSONObject requestGraphData = requestDataObj.getJSONObject(Constant.JSON_DATA);
         JSONArray requestNodes = (JSONArray) requestGraphData.get(Constant.NODE_LIST);
         GraphxVisitor eval = new GraphxVisitor(requestNodes);
-        return (Map<?, ?>) eval.visit(tree);
+        JSONObject res = new JSONObject();
+        Object graphData;
+        try {
+            graphData = eval.visit(tree);
+        } catch (Exception e) {
+            LogUtil.error(LOGGER, e);
+            res.put("success", false);
+            return res;
+        }
+        if (graphData == null) {
+            res.put("success", false);
+            return res;
+
+        }
+        res.put(Constant.GRAPH_DATA, graphData);
+        res.put("success", true);
+        return res;
     }
 
 
