@@ -140,13 +140,18 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
                 JSONObject responseJson = JSON.parseObject(responseString);
                 JSONObject page = responseJson.getJSONObject(Constant.PAGES);
                 JSONArray elements = page.getJSONArray(Constant.ELEMENTS);
-                JSONObject element = elements.getJSONObject(0);
-                res.setAvatar(element.getString(Constant.URL));
+                if (elements.size() == 0) {
+                    res.setAvatar("https://iconsapi.com/5ee262cde4b0b788a932ab9f.svg");
+                } else {
+                    JSONObject element = elements.getJSONObject(0);
+                    res.setAvatar(element.getString(Constant.URL));
+                }
             } catch (IOException e) {
                 LogUtil.error(LOGGER, e, "request error");
             }
 
         }
+        LogUtil.info(LOGGER, "create node", res.getId(), res.getText(), res.getAvatar());
         nodeList.add(res);
         return res;
     }
