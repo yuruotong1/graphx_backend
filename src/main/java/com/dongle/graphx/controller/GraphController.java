@@ -80,7 +80,7 @@ public class GraphController {
         try {
             File file = TempFile.createFile(tempDir, "tmp.dot", base);
             String outPath = tempDir.getPath() + "/outfile.png";
-            String command = "cmd.exe /C dot.exe -Kdot -Tpng " + file.getAbsolutePath() + " -o " + outPath;
+            String command = "dot -Kdot -Tpng " + file.getAbsolutePath() + " -o " + outPath;
             Command.run(command);
             OutputStream outputStream = response.getOutputStream();
             LogUtil.info(LOGGER, "Run command", command);

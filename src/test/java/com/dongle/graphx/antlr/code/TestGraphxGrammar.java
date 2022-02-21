@@ -1,27 +1,20 @@
 package com.dongle.graphx.antlr.code;
 
-import com.alibaba.fastjson.JSONArray;
-import com.dongle.graphx.antlr.GraphxVisitor;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.io.ByteArrayOutputStream;
 
 
 @SpringBootTest
 public class TestGraphxGrammar {
     @Test
     public void TestParse() {
-        String a = "ooo-->ccc-->d\nccc-->ddd";
-        CharStream codePointCharStream = CharStreams.fromString(a);
-        GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
-        GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));
-        GraphxGrammarParser.StatContext tree = parser.stat();
-        GraphxVisitor eval = new GraphxVisitor(new JSONArray());
-        ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream) eval.visit(tree);
+//        String a = "ooo-->ccc-->d\nccc-->ddd";
+//        CharStream codePointCharStream = CharStreams.fromString(a);
+//        GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
+//        GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));
+//        GraphxGrammarParser.StatContext tree = parser.stat();
+//        GraphxVisitor eval = new GraphxVisitor(new JSONArray());
+//        ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream) eval.visit(tree);
 
     }
 
