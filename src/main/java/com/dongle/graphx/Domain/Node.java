@@ -7,4 +7,5 @@ public class Node {
     private String id;
     private String text;
     private String avatar;
+    private String searchPictureName;
 }

@@ -120,7 +120,7 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
 
 
     /*
-     * 解析 antlr 中的结点信息，组合成符合 logicflow 的 node
+     * 解析 antlr 中的结点信息，创建结点
      * */
     public Node createNode(String id) {
         Node res;
@@ -130,9 +130,10 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
             res = new Node();
             res.setId(id);
             res.setText(id);
+            res.setSearchPictureName(res.getText());
             // 根据节点名称，使用网络图片
             CloseableHttpClient client = HttpClientBuilder.create().build();
-            HttpGet httpGet = new HttpGet("https://iconsapi.com/api/search?appkey=620271bee4b06f79691875ea&query=" + res.getText());
+            HttpGet httpGet = new HttpGet("https://iconsapi.com/api/search?appkey=620271bee4b06f79691875ea&query=" + res.getSearchPictureName());
             try {
                 CloseableHttpResponse response = client.execute(httpGet);
                 HttpEntity responseEntity = response.getEntity();
