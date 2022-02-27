@@ -102,7 +102,7 @@ public class GraphController {
             String nodeString = node.getId() + " [shape=\"none\", label=<<TABLE BORDER=\"0\" >\n" +
                     "<TR><TD PORT=\"f1\" FIXEDSIZE=\"TRUE\" WIDTH=\"75\" HEIGHT=\"75\"><IMG  SRC=\"" + file.getAbsolutePath() + "\"/></TD></TR>\n" +
                     "<TR><TD>" + node.getId() + "</TD></TR>\n" +
-                    "</TABLE>> fontname=\"Dengxian\"]";
+                    "</TABLE>> fontname=\""+Constant.FONT_SIM_FANG+"\"]";
             nodeDefine.append(nodeString).append("\n");
         }
         StringBuilder edgeDefine = new StringBuilder();
@@ -113,7 +113,7 @@ public class GraphController {
             String arrow = edge.getType().endsWith("_ARROW") ? Constant.ARROW_NORMAL : Constant.ARROW_NONE;
             LogUtil.info(LOGGER, "arrow type", arrow);
             String edgeString = sourceNode.getId() + ":f1 -> " + targetNode.getId() +":f1" +
-                    String.format(" [arrowhead=\"%s\" label=\"%s\" fontname=\"Dengxian\"]", arrow, edge.getText());
+                    String.format(" [arrowhead=\"%s\" label=\"%s\" fontname=\""+Constant.FONT_SIM_FANG+"\"]", arrow, edge.getText());
             edgeDefine.append(edgeString).append("\n");
         }
         String defineNodeEdge = nodeDefine + "\n" + edgeDefine;
