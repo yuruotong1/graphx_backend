@@ -37,11 +37,23 @@ public class GraphController {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphController.class);
     @RequestMapping("/parseBase64")
     @GetMapping
-    public JSONObject getParseBase64Result(@RequestParam(value="data", defaultValue = "") String data) {
+    public Object getParseBase64Result(@RequestParam(value="data", defaultValue = "") String data,
+                                           @RequestParam(value="type",required=false, defaultValue = "") String type,
+                                           HttpServletResponse response) {
         LogUtil.info(LOGGER, "staring parseBase64", data);
+        if (data.endsWith(Constant.SUFFIX_PNG)) {
+            data = data.substring(0, data.length()-4);
+        }
         byte[] decode = Base64.getDecoder().decode(data);
         JSONObject jsonObject = (JSONObject) JSONObject.parse(decode);
-        return jsonObject;
+        if(type.equals(Constant.PARSE)) {
+            return jsonObject;
+        }
+        else {
+            getImg((JSONObject) jsonObject.get(Constant.GRAPH_DATA), response);
+            return null;
+        }
+
     }
 
 
@@ -74,8 +86,9 @@ public class GraphController {
         }
         res.put(Constant.GRAPH_DATA, graphData);
         res.put("success", true);
+        res.put("rawData", rawData);
         String encode = Base64.getUrlEncoder().encodeToString(res.toJSONString().getBytes());
-        graphData.put("Base64", encode);
+        graphData.put("Base64", encode+Constant.SUFFIX_PNG);
         return res;
     }
 
@@ -83,6 +96,10 @@ public class GraphController {
     @RequestMapping(value = "/getPng", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public void getPargh(@RequestBody String requestDataString, HttpServletResponse response) {
         JSONObject requestDataObj = JSON.parseObject(requestDataString);
+        getImg(requestDataObj, response);
+    }
+
+    public void getImg(JSONObject requestDataObj, HttpServletResponse response) {
         LogUtil.info(LOGGER, "receive data", requestDataObj.toJSONString());
         JSONArray edges = requestDataObj.getJSONArray("edgeList");
         JSONArray nodes = requestDataObj.getJSONArray("nodeList");

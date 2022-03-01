@@ -14,6 +14,8 @@ public class Constant {
     public static final String JSON_DATA = "jsonData";
     public static final String URL = "url";
     public static final String FONT_SIM_FANG = "simfang";
+    public static final String PARSE = "parse";
+    public static final String SUFFIX_PNG = ".png";
 
 
     //arrow
