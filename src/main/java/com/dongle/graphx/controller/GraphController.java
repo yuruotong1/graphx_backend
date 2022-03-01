@@ -40,11 +40,11 @@ public class GraphController {
     public Object getParseBase64Result(@RequestParam(value="data", defaultValue = "") String data,
                                            @RequestParam(value="type",required=false, defaultValue = "") String type,
                                            HttpServletResponse response) {
-        LogUtil.info(LOGGER, "staring parseBase64", data);
+        LogUtil.info(LOGGER, "string parseBase64", data);
         if (data.endsWith(Constant.SUFFIX_PNG)) {
             data = data.substring(0, data.length()-4);
         }
-        byte[] decode = Base64.getDecoder().decode(data);
+        byte[] decode = Base64.getUrlDecoder().decode(data);
         JSONObject jsonObject = (JSONObject) JSONObject.parse(decode);
         if(type.equals(Constant.PARSE)) {
             return jsonObject;
