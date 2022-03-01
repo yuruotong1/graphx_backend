@@ -28,7 +28,7 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
     ArrayList<Node> nodeList = new ArrayList<>();
     ArrayList<Edge> edgeList = new ArrayList<>();
     Map<String, Node> requestNodeMap = new HashMap<>();
-    Map<String, Object> res = new HashMap<>();
+    JSONObject res = new JSONObject();
 
     public GraphxVisitor(JSONArray requestNodeList) {
         for (Object requestNodeObj : requestNodeList) {
@@ -38,7 +38,7 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
     }
 
     @Override
-    public Map<String, Object> visitNode(GraphxGrammarParser.NodeContext ctx) {
+    public JSONObject visitNode(GraphxGrammarParser.NodeContext ctx) {
         LogUtil.info(LOGGER, "create node", ctx.STRING().getText());
         getNode(ctx.STRING().getText());
         res.put("edgeList", edgeList);
@@ -47,7 +47,7 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
     }
 
     @Override
-    public Map<String, Object> visitStatExpr(GraphxGrammarParser.StatExprContext ctx) {
+    public JSONObject visitStatExpr(GraphxGrammarParser.StatExprContext ctx) {
         for (GraphxGrammarParser.ExprContext expr : ctx.expr()) {
             visit(expr);
         }

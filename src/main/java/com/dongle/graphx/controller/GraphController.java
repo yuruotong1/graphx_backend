@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,15 @@ import static com.dongle.graphx.utils.TempFile.deleteDir;
 @RequestMapping("/graph")
 public class GraphController {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphController.class);
+    @RequestMapping("/parseBase64")
+    @GetMapping
+    public JSONObject getParseBase64Result(@RequestParam(value="data", defaultValue = "") String data) {
+        LogUtil.info(LOGGER, "staring parseBase64", data);
+        byte[] decode = Base64.getDecoder().decode(data);
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(decode);
+        return jsonObject;
+    }
+
 
     @RequestMapping("/parse")
     @PostMapping
@@ -49,9 +59,9 @@ public class GraphController {
         JSONArray requestNodes = (JSONArray) requestGraphData.get(Constant.NODE_LIST);
         GraphxVisitor eval = new GraphxVisitor(requestNodes);
         JSONObject res = new JSONObject();
-        Object graphData;
+        JSONObject graphData;
         try {
-            graphData = eval.visit(tree);
+            graphData = (JSONObject) eval.visit(tree);
         } catch (Exception e) {
             LogUtil.error(LOGGER, e);
             res.put("success", false);
@@ -64,6 +74,8 @@ public class GraphController {
         }
         res.put(Constant.GRAPH_DATA, graphData);
         res.put("success", true);
+        String encode = Base64.getUrlEncoder().encodeToString(res.toJSONString().getBytes());
+        graphData.put("Base64", encode);
         return res;
     }
 
