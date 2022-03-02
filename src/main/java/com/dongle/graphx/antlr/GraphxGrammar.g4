@@ -3,20 +3,19 @@ grammar GraphxGrammar;
 package com.dongle.graphx.antlr.code;
 }
 
-stat    : STRING   # node
-        | expr (NEWLINE+ expr)* NEWLINE* #statExpr
-        | NEWLINE+  #statNewLine;
+stat    : expr (NEWLINE+ expr)* NEWLINE* #statExpr
+          | NEWLINE+  #statNewLine
+          | STRING   # node;
 
-expr    :STRING line STRING (line STRING)*;
+expr    :STRING (line STRING)+;
 
-line    : LINE LINE                 #lineLine
-        | LINE STRING LINE          #lineStringLine
+line    : LINE STRING LINE ARROW    #lineStringLineArrow
         | LINE LINE ARROW           #lineLineArrow
-        | LINE STRING LINE ARROW    #lineStringLineArrow;
+        | LINE STRING LINE          #lineStringLine
+        | LINE LINE                 #lineLine;
 
-STRING      :   [\u4e00-\u9fa5a-zA-Z0-9_]+;
+STRING      :   (~('-'|'>'|'\n'|'\r')|'\\-'|'\\>')+;
 LINE        :   '-';
 ARROW       :   '>';
-COLON       :   ':';
-NEWLINE     :   '\r'?'\n';  //匹配新行
+NEWLINE     :   '\r'?'\n'; //匹配新行
 WS : [ \t]+ -> skip;

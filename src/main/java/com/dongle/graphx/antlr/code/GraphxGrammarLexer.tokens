@@ -1,9 +1,7 @@
 STRING=1
 LINE=2
 ARROW=3
-COLON=4
-NEWLINE=5
-WS=6
+NEWLINE=4
+WS=5
 '-'=2
 '>'=3
-':'=4

@@ -133,8 +133,8 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
             res.setSearchPictureName(res.getText());
             // 根据节点名称，使用网络图片
             CloseableHttpClient client = HttpClientBuilder.create().build();
-            HttpGet httpGet = new HttpGet("https://iconsapi.com/api/search?appkey=620271bee4b06f79691875ea&query=" + res.getSearchPictureName());
             try {
+                HttpGet httpGet = new HttpGet("https://iconsapi.com/api/search?appkey=620271bee4b06f79691875ea&query=" + res.getSearchPictureName());
                 CloseableHttpResponse response = client.execute(httpGet);
                 HttpEntity responseEntity = response.getEntity();
                 String responseString = EntityUtils.toString(responseEntity);
@@ -142,12 +142,13 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
                 JSONObject page = responseJson.getJSONObject(Constant.PAGES);
                 JSONArray elements = page.getJSONArray(Constant.ELEMENTS);
                 if (elements.size() == 0) {
-                    res.setAvatar("https://iconsapi.com/5ee262cde4b0b788a932ab9f.svg");
+                    res.setAvatar(Constant.DEFAULT_SVG_URL);
                 } else {
                     JSONObject element = elements.getJSONObject(0);
                     res.setAvatar(element.getString(Constant.URL));
                 }
-            } catch (IOException e) {
+            } catch (IllegalArgumentException | IOException e) {
+                res.setAvatar(Constant.DEFAULT_SVG_URL);
                 LogUtil.error(LOGGER, e, "request error");
             }
 
