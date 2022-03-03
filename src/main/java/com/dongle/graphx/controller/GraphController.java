@@ -8,10 +8,7 @@ import com.dongle.graphx.Domain.Node;
 import com.dongle.graphx.antlr.GraphxVisitor;
 import com.dongle.graphx.antlr.code.GraphxGrammarLexer;
 import com.dongle.graphx.antlr.code.GraphxGrammarParser;
-import com.dongle.graphx.utils.Command;
-import com.dongle.graphx.utils.Constant;
-import com.dongle.graphx.utils.LogUtil;
-import com.dongle.graphx.utils.TempFile;
+import com.dongle.graphx.utils.*;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -118,7 +115,7 @@ public class GraphController {
         } catch (IOException e) {
             LogUtil.error(LOGGER, e);
         }
-        deleteDir(tempDir);
+//        deleteDir(tempDir);
     }
 
     public Map<String, Object> createGraphviz(JSONArray edges, JSONArray nodes, File tempDir) {
@@ -128,9 +125,9 @@ public class GraphController {
             Node node = JSON.parseObject(JSON.toJSONString(nodeObj), Node.class);
             File file = convertHttpSvg2Png(node.getAvatar(), tempDir);
             assert file != null;
-            String nodeString = node.getId() + " [shape=\"none\", label=<<TABLE BORDER=\"0\" >\n" +
+            String nodeString = GraphvizDot.getName(node.getId()) + " [shape=\"none\", label=<<TABLE BORDER=\"0\" >\n" +
                     "<TR><TD PORT=\"f1\" FIXEDSIZE=\"TRUE\" WIDTH=\"75\" HEIGHT=\"75\"><IMG  SRC=\"" + file.getAbsolutePath() + "\"/></TD></TR>\n" +
-                    "<TR><TD>" + node.getId() + "</TD></TR>\n" +
+                    "<TR><TD>" + GraphvizDot.handleSymbol(node.getId()) + "</TD></TR>\n" +
                     "</TABLE>> fontname=\""+Constant.FONT_SIM_FANG+"\"]";
             nodeDefine.append(nodeString).append("\n");
         }
@@ -141,7 +138,7 @@ public class GraphController {
             Node targetNode = edge.getTargetNode();
             String arrow = edge.getType().endsWith("_ARROW") ? Constant.ARROW_NORMAL : Constant.ARROW_NONE;
             LogUtil.info(LOGGER, "arrow type", arrow);
-            String edgeString = sourceNode.getId() + ":f1 -> " + targetNode.getId() +":f1" +
+            String edgeString = GraphvizDot.getName(sourceNode.getId()) + ":f1 -> " + GraphvizDot.getName(targetNode.getId()) +":f1" +
                     String.format(" [arrowhead=\"%s\" label=\"%s\" fontname=\""+Constant.FONT_SIM_FANG+"\"]", arrow, edge.getText());
             edgeDefine.append(edgeString).append("\n");
         }

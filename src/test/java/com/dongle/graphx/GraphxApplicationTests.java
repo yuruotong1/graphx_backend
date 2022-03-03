@@ -13,7 +13,7 @@ class GraphxApplicationTests {
 
     @Test
     void contextLoads() {
-        Node node = new Node();
+        System.out.println("\\>".replaceAll("\\\\>", ">"));
     }
 
 }
