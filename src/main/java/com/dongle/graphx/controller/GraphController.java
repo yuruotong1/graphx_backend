@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -39,16 +40,17 @@ public class GraphController {
                                            HttpServletResponse response) {
         LogUtil.info(LOGGER, "string parseBase64", data);
         if (data.endsWith(Constant.SUFFIX_PNG)) {
-            data = data.substring(0, data.length()-4);
-        }
-        byte[] decode = Base64.getUrlDecoder().decode(data);
-        JSONObject jsonObject = (JSONObject) JSONObject.parse(decode);
-        if(type.equals(Constant.PARSE)) {
-            return jsonObject;
-        }
-        else {
-            getImg((JSONObject) jsonObject.get(Constant.GRAPH_DATA), response);
-            return null;
+            data = data.substring(0, data.length() - 4);
+            byte[] decode = Base64.getUrlDecoder().decode(data);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(decode);
+            if (type.equals(Constant.PARSE)) {
+                return jsonObject;
+            } else {
+                getImg((JSONObject) jsonObject.get(Constant.GRAPH_DATA), response);
+                return null;
+            }
+        }else {
+            return new ModelAndView("redirect:"+Constant.FRONT_REDIRECT_URL+data+Constant.SUFFIX_PNG);
         }
 
     }
