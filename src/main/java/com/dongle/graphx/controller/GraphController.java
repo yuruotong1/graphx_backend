@@ -115,7 +115,7 @@ public class GraphController {
         } catch (IOException e) {
             LogUtil.error(LOGGER, e);
         }
-//        deleteDir(tempDir);
+        deleteDir(tempDir);
     }
 
     public Map<String, Object> createGraphviz(JSONArray edges, JSONArray nodes, File tempDir) {
