@@ -141,13 +141,18 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
                 HttpEntity responseEntity = response.getEntity();
                 String responseString = EntityUtils.toString(responseEntity);
                 JSONObject responseJson = JSON.parseObject(responseString);
-                JSONObject page = responseJson.getJSONObject(Constant.PAGES);
-                JSONArray elements = page.getJSONArray(Constant.ELEMENTS);
-                if (elements.size() == 0) {
+                // 如果没搜索到图片，则使用默认图片
+                if(responseJson.containsKey("result") && responseJson.getString("result").equals("error")) {
                     res.setAvatar(Constant.DEFAULT_SVG_URL);
                 } else {
-                    JSONObject element = elements.getJSONObject(0);
-                    res.setAvatar(element.getString(Constant.URL));
+                    JSONObject page = responseJson.getJSONObject(Constant.PAGES);
+                    JSONArray elements = page.getJSONArray(Constant.ELEMENTS);
+                    if (elements.size() == 0) {
+                        res.setAvatar(Constant.DEFAULT_SVG_URL);
+                    } else {
+                        JSONObject element = elements.getJSONObject(0);
+                        res.setAvatar(element.getString(Constant.URL));
+                    }
                 }
             } catch (IllegalArgumentException | IOException e) {
                 res.setAvatar(Constant.DEFAULT_SVG_URL);

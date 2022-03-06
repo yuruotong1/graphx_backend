@@ -129,7 +129,7 @@ public class GraphController {
             assert file != null;
             String nodeString = GraphvizDot.getName(node.getId()) + " [shape=\"none\", label=<<TABLE BORDER=\"0\" >\n" +
                     "<TR><TD PORT=\"f1\" FIXEDSIZE=\"TRUE\" WIDTH=\"75\" HEIGHT=\"75\"><IMG  SRC=\"" + file.getAbsolutePath() + "\"/></TD></TR>\n" +
-                    "<TR><TD>" + GraphvizDot.handleSymbol(node.getId()) + "</TD></TR>\n" +
+                    "<TR><TD>" + GraphvizDot.handleSymbol(node.getText()) + "</TD></TR>\n" +
                     "</TABLE>> fontname=\""+Constant.FONT_SIM_FANG+"\"]";
             nodeDefine.append(nodeString).append("\n");
         }
