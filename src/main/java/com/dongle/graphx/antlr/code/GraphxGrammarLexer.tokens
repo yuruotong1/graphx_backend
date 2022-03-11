@@ -1,7 +1,10 @@
-STRING=1
-LINE=2
-ARROW=3
-NEWLINE=4
-WS=5
-'-'=2
-'>'=3
+T__0=1
+T__1=2
+Identifier=3
+Line=4
+Arrow=5
+WS=6
+'{'=1
+'}'=2
+'-'=4
+'>'=5

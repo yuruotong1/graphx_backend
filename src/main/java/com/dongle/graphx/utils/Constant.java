@@ -16,9 +16,15 @@ public class Constant {
     public static final String FONT_SIM_FANG = "simfang";
     public static final String PARSE = "parse";
     public static final String SUFFIX_PNG = ".png";
+    //graphxVisitor
+    public static final String RESULT = "result";
+    public static final String ERROR = "error";
+    // svg
     public static final String DEFAULT_SVG_URL = "https://iconsapi.com/5ee262cde4b0b788a932ab9f.svg";
     public static final String FRONT_REDIRECT_URL = "http://120.27.201.81/#/?textareaUrl=";
+    public static final String SEARCH_SVG_URL = "https://iconsapi.com/api/search?appkey=620271bee4b06f79691875ea&query=";
     //arrow
     public static final String ARROW_NONE = "none";
     public static final String ARROW_NORMAL = "normal";
+
 }

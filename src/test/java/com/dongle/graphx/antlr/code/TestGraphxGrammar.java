@@ -1,6 +1,7 @@
 package com.dongle.graphx.antlr.code;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.dongle.graphx.antlr.GraphxVisitor;
 
 import org.antlr.v4.runtime.CharStream;
@@ -9,13 +10,15 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 
 @SpringBootTest
 public class TestGraphxGrammar {
     @Test
     public void TestParse() {
-        String a = "ooo\\--->ccc-->d\nccc-->ddd";
+        String a = "ooo-abc->ccc-->d\nccc-->ddd";
         CharStream codePointCharStream = CharStreams.fromString(a);
         GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
         GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));

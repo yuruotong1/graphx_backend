@@ -1,21 +1,18 @@
 grammar GraphxGrammar;
+import GraphxLexer;
+
 @header {
 package com.dongle.graphx.antlr.code;
 }
 
-stat    : expr (NEWLINE+ expr)* NEWLINE* #statExpr
-          | NEWLINE+  #statNewLine
-          | STRING   # node;
+stat  :statement* EOF;
 
-expr    :STRING (line STRING)+;
+lineExpression : lineExpression Line opLineString=Identifier? Line opLineArrow=Arrow? lineExpression #  expression
+               | Identifier  # identifier;
 
-line    : LINE STRING LINE ARROW    #lineStringLineArrow
-        | LINE LINE ARROW           #lineLineArrow
-        | LINE STRING LINE          #lineStringLine
-        | LINE LINE                 #lineLine;
+statement : structDefile
+       | lineExpression;
+structDefile :Identifier structBody;
+structBody:  '{' statement* '}';
 
-STRING      :   (~('-'|'>'|'\n'|'\r')|'\\-'|'\\>')+;
-LINE        :   '-';
-ARROW       :   '>';
-NEWLINE     :   '\r'?'\n'; //匹配新行
-WS : [ \t]+ -> skip;
+

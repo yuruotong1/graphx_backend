@@ -8,7 +8,6 @@ import com.dongle.graphx.antlr.code.GraphxGrammarBaseVisitor;
 import com.dongle.graphx.antlr.code.GraphxGrammarParser;
 import com.dongle.graphx.utils.Constant;
 import com.dongle.graphx.utils.LogUtil;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -17,150 +16,115 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphxVisitor.class);
-    ArrayList<Node> nodeList = new ArrayList<>();
     ArrayList<Edge> edgeList = new ArrayList<>();
-    Map<String, Node> requestNodeMap = new HashMap<>();
+    ArrayList<Node> nodeList = new ArrayList<>();
+
     JSONObject res = new JSONObject();
 
     public GraphxVisitor(JSONArray requestNodeList) {
         for (Object requestNodeObj : requestNodeList) {
             Node requestNode = JSON.parseObject(requestNodeObj.toString(), Node.class);
-            requestNodeMap.put(requestNode.getId(), requestNode);
+            nodeList.add(requestNode);
         }
     }
 
     @Override
-    public JSONObject visitNode(GraphxGrammarParser.NodeContext ctx) {
-        LogUtil.info(LOGGER, "create node", ctx.STRING().getText());
-        getNode(ctx.STRING().getText());
-        res.put("edgeList", edgeList);
-        res.put("nodeList", nodeList);
-        return res;
-    }
-
-    @Override
-    public JSONObject visitStatExpr(GraphxGrammarParser.StatExprContext ctx) {
-        for (GraphxGrammarParser.ExprContext expr : ctx.expr()) {
-            visit(expr);
+    public JSONObject visitStat(GraphxGrammarParser.StatContext ctx) {
+        for (GraphxGrammarParser.StatementContext statementContext : ctx.statement()) {
+            visit(statementContext);
         }
         res.put("edgeList", edgeList);
         res.put("nodeList", nodeList);
         return res;
-    }
-
-    @Override
-    public Edge visitLineLine(GraphxGrammarParser.LineLineContext ctx) {
-        return createEdge(Constant.LINE_LINE);
-    }
-
-    @Override
-    public Edge visitLineStringLine(GraphxGrammarParser.LineStringLineContext ctx) {
-        return createEdge(Constant.LINE_STRING_LINE, ctx.STRING().getText());
-    }
-
-    @Override
-    public Edge visitLineLineArrow(GraphxGrammarParser.LineLineArrowContext ctx) {
-        return createEdge(Constant.LINE_LINE_ARROW);
-    }
-
-    @Override
-    public Edge visitLineStringLineArrow(GraphxGrammarParser.LineStringLineArrowContext ctx) {
-        return createEdge(Constant.LINE_STRING_LINE_ARROW, ctx.STRING().getText());
     }
 
     /*
      * 创建边
      * */
-    public Edge createEdge(String type, String text) {
+    public Edge createEdge(String type, String text, Node sourceNode, Node targetNode) {
         Edge edge = new Edge();
         edge.setType(type);
         edge.setText(text);
+        edge.setSourceNode(sourceNode);
+        edge.setTargetNode(targetNode);
         return edge;
     }
 
-    public Edge createEdge(String type) {
-        return createEdge(type, "");
+    @Override
+    public Node visitExpression(GraphxGrammarParser.ExpressionContext ctx) {
+        Node left = (Node) visit(ctx.lineExpression(0));
+        Node right = (Node) visit(ctx.lineExpression(1));
+        String edgeType =  ctx.opLineArrow != null && ctx.opLineArrow.getText().equals(">") ? Constant.ARROW_NORMAL : Constant.ARROW_NONE;
+        String edgeText =  ctx.opLineString == null ? "" : ctx.opLineString.getText();
+        Edge edge = createEdge(edgeType, edgeText, left, right);
+        edgeList.add(edge);
+        return right;
     }
 
     @Override
-    public Void visitExpr(GraphxGrammarParser.ExprContext ctx) {
-        for (int i = 0; i < ctx.children.size() - 1; i += 2) {
-            TerminalNode sourceTerminalNode = (TerminalNode) ctx.getChild(i);
-            GraphxGrammarParser.LineContext line = (GraphxGrammarParser.LineContext) ctx.getChild(i + 1);
-            TerminalNode targetTerminalNode = (TerminalNode) ctx.getChild(i + 2);
-            Node sourceNode = getNode(sourceTerminalNode.getText());
-            Node targetNode = getNode(targetTerminalNode.getText());
-            Edge edge = (Edge) visit(line);
-            edge.setSourceNode(sourceNode);
-            edge.setTargetNode(targetNode);
-            edgeList.add(edge);
-        }
-        return null;
+    public Node visitIdentifier(GraphxGrammarParser.IdentifierContext ctx)  {
+        return getNode(ctx.getText());
     }
-
-
 
     /*
      * 根据 id 获取 node，若不存在，创建一个 node
      * */
     public Node getNode(String id) {
-        for (Node node : nodeList) {
+        for(Node node: nodeList) {
             if (node.getId().equals(id)) {
                 return node;
             }
         }
         return createNode(id);
+
+
     }
 
-
+    // 获取第一张图片
+    public String getSvgFromIconsApi(String searchName) {
+        // 根据节点名称，使用网络图片
+        CloseableHttpClient client = HttpClientBuilder.create().build();
+        JSONObject responseJson=null;
+        try {
+            HttpGet httpGet = new HttpGet(Constant.SEARCH_SVG_URL + searchName);
+            CloseableHttpResponse response = client.execute(httpGet);
+            HttpEntity responseEntity = response.getEntity();
+            String responseString = EntityUtils.toString(responseEntity);
+            responseJson = JSON.parseObject(responseString);
+        } catch (IllegalArgumentException | IOException e) {
+            LogUtil.error(LOGGER, e, "request error");
+        }
+            // 如果没搜索到图片，则使用默认图片
+            if(responseJson != null &&
+                    !(responseJson.containsKey(Constant.RESULT) &&
+                    !responseJson.getString(Constant.RESULT).equals(Constant.ERROR))) {
+                JSONObject page = responseJson.getJSONObject(Constant.PAGES);
+                JSONArray elements = page.getJSONArray(Constant.ELEMENTS);
+                if (elements.size() != 0) {
+                    JSONObject element = elements.getJSONObject(0);
+                    return element.getString(Constant.URL);
+                }
+            }
+            return Constant.DEFAULT_SVG_URL;
+    }
     /*
      * 解析 antlr 中的结点信息，创建结点
      * */
     public Node createNode(String id) {
-        Node res;
-        if (requestNodeMap.containsKey(id)) {
-            res = requestNodeMap.get(id);
-        } else {
-            res = new Node();
-            res.setId(id);
-            res.setText(id);
-            res.setSearchPictureName(res.getText());
-            // 根据节点名称，使用网络图片
-            CloseableHttpClient client = HttpClientBuilder.create().build();
-            try {
-                HttpGet httpGet = new HttpGet("https://iconsapi.com/api/search?appkey=620271bee4b06f79691875ea&query=" + res.getSearchPictureName());
-                CloseableHttpResponse response = client.execute(httpGet);
-                HttpEntity responseEntity = response.getEntity();
-                String responseString = EntityUtils.toString(responseEntity);
-                JSONObject responseJson = JSON.parseObject(responseString);
-                // 如果没搜索到图片，则使用默认图片
-                if(responseJson.containsKey("result") && responseJson.getString("result").equals("error")) {
-                    res.setAvatar(Constant.DEFAULT_SVG_URL);
-                } else {
-                    JSONObject page = responseJson.getJSONObject(Constant.PAGES);
-                    JSONArray elements = page.getJSONArray(Constant.ELEMENTS);
-                    if (elements.size() == 0) {
-                        res.setAvatar(Constant.DEFAULT_SVG_URL);
-                    } else {
-                        JSONObject element = elements.getJSONObject(0);
-                        res.setAvatar(element.getString(Constant.URL));
-                    }
-                }
-            } catch (IllegalArgumentException | IOException e) {
-                res.setAvatar(Constant.DEFAULT_SVG_URL);
-                LogUtil.error(LOGGER, e, "request error");
-            }
-
-        }
-        LogUtil.info(LOGGER, "create node", res.getId(), res.getText(), res.getAvatar());
+        Node res = new Node();
+        res.setId(id);
+        res.setText(id);
+        res.setSearchPictureName(res.getText());
+        res.setAvatar(getSvgFromIconsApi(res.getSearchPictureName()));
+        LogUtil.info(LOGGER, "create node", res.getId(), res.getAvatar());
         nodeList.add(res);
         return res;
     }

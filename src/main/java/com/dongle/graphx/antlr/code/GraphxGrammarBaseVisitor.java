@@ -19,54 +19,40 @@ public class GraphxGrammarBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStatExpr(GraphxGrammarParser.StatExprContext ctx) { return visitChildren(ctx); }
+	@Override public T visitStat(GraphxGrammarParser.StatContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStatNewLine(GraphxGrammarParser.StatNewLineContext ctx) { return visitChildren(ctx); }
+	@Override public T visitIdentifier(GraphxGrammarParser.IdentifierContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitNode(GraphxGrammarParser.NodeContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpression(GraphxGrammarParser.ExpressionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpr(GraphxGrammarParser.ExprContext ctx) { return visitChildren(ctx); }
+	@Override public T visitStatement(GraphxGrammarParser.StatementContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLineStringLineArrow(GraphxGrammarParser.LineStringLineArrowContext ctx) { return visitChildren(ctx); }
+	@Override public T visitStructDefile(GraphxGrammarParser.StructDefileContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLineLineArrow(GraphxGrammarParser.LineLineArrowContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitLineStringLine(GraphxGrammarParser.LineStringLineContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitLineLine(GraphxGrammarParser.LineLineContext ctx) { return visitChildren(ctx); }
+	@Override public T visitStructBody(GraphxGrammarParser.StructBodyContext ctx) { return visitChildren(ctx); }
 }

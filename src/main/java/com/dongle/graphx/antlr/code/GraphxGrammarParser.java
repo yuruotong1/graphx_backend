@@ -19,25 +19,26 @@ public class GraphxGrammarParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		STRING=1, LINE=2, ARROW=3, NEWLINE=4, WS=5;
+		T__0=1, T__1=2, Identifier=3, Line=4, Arrow=5, WS=6;
 	public static final int
-		RULE_stat = 0, RULE_expr = 1, RULE_line = 2;
+		RULE_stat = 0, RULE_lineExpression = 1, RULE_statement = 2, RULE_structDefile = 3, 
+		RULE_structBody = 4;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"stat", "expr", "line"
+			"stat", "lineExpression", "statement", "structDefile", "structBody"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, null, "'-'", "'>'"
+			null, "'{'", "'}'", null, "'-'", "'>'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "STRING", "LINE", "ARROW", "NEWLINE", "WS"
+			null, null, null, "Identifier", "Line", "Arrow", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -92,76 +93,28 @@ public class GraphxGrammarParser extends Parser {
 	}
 
 	public static class StatContext extends ParserRuleContext {
+		public TerminalNode EOF() { return getToken(GraphxGrammarParser.EOF, 0); }
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
 		public StatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_stat; }
-	 
-		public StatContext() { }
-		public void copyFrom(StatContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class NodeContext extends StatContext {
-		public TerminalNode STRING() { return getToken(GraphxGrammarParser.STRING, 0); }
-		public NodeContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterNode(this);
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterStat(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitNode(this);
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitStat(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitNode(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class StatExprContext extends StatContext {
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
-		public List<TerminalNode> NEWLINE() { return getTokens(GraphxGrammarParser.NEWLINE); }
-		public TerminalNode NEWLINE(int i) {
-			return getToken(GraphxGrammarParser.NEWLINE, i);
-		}
-		public StatExprContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterStatExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitStatExpr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitStatExpr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class StatNewLineContext extends StatContext {
-		public List<TerminalNode> NEWLINE() { return getTokens(GraphxGrammarParser.NEWLINE); }
-		public TerminalNode NEWLINE(int i) {
-			return getToken(GraphxGrammarParser.NEWLINE, i);
-		}
-		public StatNewLineContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterStatNewLine(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitStatNewLine(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitStatNewLine(this);
+			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitStat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -171,88 +124,225 @@ public class GraphxGrammarParser extends Parser {
 		enterRule(_localctx, 0, RULE_stat);
 		int _la;
 		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(13);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==Identifier) {
+				{
+				{
+				setState(10);
+				statement();
+				}
+				}
+				setState(15);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(16);
+			match(EOF);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class LineExpressionContext extends ParserRuleContext {
+		public LineExpressionContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_lineExpression; }
+	 
+		public LineExpressionContext() { }
+		public void copyFrom(LineExpressionContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class IdentifierContext extends LineExpressionContext {
+		public TerminalNode Identifier() { return getToken(GraphxGrammarParser.Identifier, 0); }
+		public IdentifierContext(LineExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterIdentifier(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitIdentifier(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitIdentifier(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionContext extends LineExpressionContext {
+		public Token opLineString;
+		public Token opLineArrow;
+		public List<LineExpressionContext> lineExpression() {
+			return getRuleContexts(LineExpressionContext.class);
+		}
+		public LineExpressionContext lineExpression(int i) {
+			return getRuleContext(LineExpressionContext.class,i);
+		}
+		public List<TerminalNode> Line() { return getTokens(GraphxGrammarParser.Line); }
+		public TerminalNode Line(int i) {
+			return getToken(GraphxGrammarParser.Line, i);
+		}
+		public TerminalNode Identifier() { return getToken(GraphxGrammarParser.Identifier, 0); }
+		public TerminalNode Arrow() { return getToken(GraphxGrammarParser.Arrow, 0); }
+		public ExpressionContext(LineExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final LineExpressionContext lineExpression() throws RecognitionException {
+		return lineExpression(0);
+	}
+
+	private LineExpressionContext lineExpression(int _p) throws RecognitionException {
+		ParserRuleContext _parentctx = _ctx;
+		int _parentState = getState();
+		LineExpressionContext _localctx = new LineExpressionContext(_ctx, _parentState);
+		LineExpressionContext _prevctx = _localctx;
+		int _startState = 2;
+		enterRecursionRule(_localctx, 2, RULE_lineExpression, _p);
+		int _la;
+		try {
 			int _alt;
-			setState(30);
+			enterOuterAlt(_localctx, 1);
+			{
+			{
+			_localctx = new IdentifierContext(_localctx);
+			_ctx = _localctx;
+			_prevctx = _localctx;
+
+			setState(19);
+			match(Identifier);
+			}
+			_ctx.stop = _input.LT(-1);
+			setState(33);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( _parseListeners!=null ) triggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					{
+					_localctx = new ExpressionContext(new LineExpressionContext(_parentctx, _parentState));
+					pushNewRecursionContext(_localctx, _startState, RULE_lineExpression);
+					setState(21);
+					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+					setState(22);
+					match(Line);
+					setState(24);
+					_errHandler.sync(this);
+					_la = _input.LA(1);
+					if (_la==Identifier) {
+						{
+						setState(23);
+						((ExpressionContext)_localctx).opLineString = match(Identifier);
+						}
+					}
+
+					setState(26);
+					match(Line);
+					setState(28);
+					_errHandler.sync(this);
+					_la = _input.LA(1);
+					if (_la==Arrow) {
+						{
+						setState(27);
+						((ExpressionContext)_localctx).opLineArrow = match(Arrow);
+						}
+					}
+
+					setState(30);
+					lineExpression(3);
+					}
+					} 
+				}
+				setState(35);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			unrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public static class StatementContext extends ParserRuleContext {
+		public StructDefileContext structDefile() {
+			return getRuleContext(StructDefileContext.class,0);
+		}
+		public LineExpressionContext lineExpression() {
+			return getRuleContext(LineExpressionContext.class,0);
+		}
+		public StatementContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_statement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final StatementContext statement() throws RecognitionException {
+		StatementContext _localctx = new StatementContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_statement);
+		try {
+			setState(38);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
 			case 1:
-				_localctx = new StatExprContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(6);
-				expr();
-				setState(15);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
-				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-					if ( _alt==1 ) {
-						{
-						{
-						setState(8); 
-						_errHandler.sync(this);
-						_la = _input.LA(1);
-						do {
-							{
-							{
-							setState(7);
-							match(NEWLINE);
-							}
-							}
-							setState(10); 
-							_errHandler.sync(this);
-							_la = _input.LA(1);
-						} while ( _la==NEWLINE );
-						setState(12);
-						expr();
-						}
-						} 
-					}
-					setState(17);
-					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
-				}
-				setState(21);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				while (_la==NEWLINE) {
-					{
-					{
-					setState(18);
-					match(NEWLINE);
-					}
-					}
-					setState(23);
-					_errHandler.sync(this);
-					_la = _input.LA(1);
-				}
+				setState(36);
+				structDefile();
 				}
 				break;
 			case 2:
-				_localctx = new StatNewLineContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(25); 
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				do {
-					{
-					{
-					setState(24);
-					match(NEWLINE);
-					}
-					}
-					setState(27); 
-					_errHandler.sync(this);
-					_la = _input.LA(1);
-				} while ( _la==NEWLINE );
-				}
-				break;
-			case 3:
-				_localctx = new NodeContext(_localctx);
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(29);
-				match(STRING);
+				setState(37);
+				lineExpression(0);
 				}
 				break;
 			}
@@ -268,225 +358,104 @@ public class GraphxGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ExprContext extends ParserRuleContext {
-		public List<TerminalNode> STRING() { return getTokens(GraphxGrammarParser.STRING); }
-		public TerminalNode STRING(int i) {
-			return getToken(GraphxGrammarParser.STRING, i);
+	public static class StructDefileContext extends ParserRuleContext {
+		public TerminalNode Identifier() { return getToken(GraphxGrammarParser.Identifier, 0); }
+		public StructBodyContext structBody() {
+			return getRuleContext(StructBodyContext.class,0);
 		}
-		public List<LineContext> line() {
-			return getRuleContexts(LineContext.class);
-		}
-		public LineContext line(int i) {
-			return getRuleContext(LineContext.class,i);
-		}
-		public ExprContext(ParserRuleContext parent, int invokingState) {
+		public StructDefileContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_expr; }
+		@Override public int getRuleIndex() { return RULE_structDefile; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterExpr(this);
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterStructDefile(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitExpr(this);
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitStructDefile(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitExpr(this);
+			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitStructDefile(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ExprContext expr() throws RecognitionException {
-		ExprContext _localctx = new ExprContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_expr);
+	public final StructDefileContext structDefile() throws RecognitionException {
+		StructDefileContext _localctx = new StructDefileContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_structDefile);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(40);
+			match(Identifier);
+			setState(41);
+			structBody();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class StructBodyContext extends ParserRuleContext {
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
+		public StructBodyContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_structBody; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterStructBody(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitStructBody(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitStructBody(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final StructBodyContext structBody() throws RecognitionException {
+		StructBodyContext _localctx = new StructBodyContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_structBody);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(32);
-			match(STRING);
-			setState(36); 
+			setState(43);
+			match(T__0);
+			setState(47);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			do {
+			while (_la==Identifier) {
 				{
-				{
-				setState(33);
-				line();
-				setState(34);
-				match(STRING);
-				}
-				}
-				setState(38); 
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-			} while ( _la==LINE );
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class LineContext extends ParserRuleContext {
-		public LineContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_line; }
-	 
-		public LineContext() { }
-		public void copyFrom(LineContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class LineStringLineContext extends LineContext {
-		public List<TerminalNode> LINE() { return getTokens(GraphxGrammarParser.LINE); }
-		public TerminalNode LINE(int i) {
-			return getToken(GraphxGrammarParser.LINE, i);
-		}
-		public TerminalNode STRING() { return getToken(GraphxGrammarParser.STRING, 0); }
-		public LineStringLineContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterLineStringLine(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitLineStringLine(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitLineStringLine(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineStringLineArrowContext extends LineContext {
-		public List<TerminalNode> LINE() { return getTokens(GraphxGrammarParser.LINE); }
-		public TerminalNode LINE(int i) {
-			return getToken(GraphxGrammarParser.LINE, i);
-		}
-		public TerminalNode STRING() { return getToken(GraphxGrammarParser.STRING, 0); }
-		public TerminalNode ARROW() { return getToken(GraphxGrammarParser.ARROW, 0); }
-		public LineStringLineArrowContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterLineStringLineArrow(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitLineStringLineArrow(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitLineStringLineArrow(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineLineContext extends LineContext {
-		public List<TerminalNode> LINE() { return getTokens(GraphxGrammarParser.LINE); }
-		public TerminalNode LINE(int i) {
-			return getToken(GraphxGrammarParser.LINE, i);
-		}
-		public LineLineContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterLineLine(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitLineLine(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitLineLine(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineLineArrowContext extends LineContext {
-		public List<TerminalNode> LINE() { return getTokens(GraphxGrammarParser.LINE); }
-		public TerminalNode LINE(int i) {
-			return getToken(GraphxGrammarParser.LINE, i);
-		}
-		public TerminalNode ARROW() { return getToken(GraphxGrammarParser.ARROW, 0); }
-		public LineLineArrowContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).enterLineLineArrow(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof GraphxGrammarListener ) ((GraphxGrammarListener)listener).exitLineLineArrow(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof GraphxGrammarVisitor ) return ((GraphxGrammarVisitor<? extends T>)visitor).visitLineLineArrow(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final LineContext line() throws RecognitionException {
-		LineContext _localctx = new LineContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_line);
-		try {
-			setState(52);
-			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
-			case 1:
-				_localctx = new LineStringLineArrowContext(_localctx);
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(40);
-				match(LINE);
-				setState(41);
-				match(STRING);
-				setState(42);
-				match(LINE);
-				setState(43);
-				match(ARROW);
-				}
-				break;
-			case 2:
-				_localctx = new LineLineArrowContext(_localctx);
-				enterOuterAlt(_localctx, 2);
 				{
 				setState(44);
-				match(LINE);
-				setState(45);
-				match(LINE);
-				setState(46);
-				match(ARROW);
+				statement();
 				}
-				break;
-			case 3:
-				_localctx = new LineStringLineContext(_localctx);
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(47);
-				match(LINE);
-				setState(48);
-				match(STRING);
+				}
 				setState(49);
-				match(LINE);
-				}
-				break;
-			case 4:
-				_localctx = new LineLineContext(_localctx);
-				enterOuterAlt(_localctx, 4);
-				{
-				setState(50);
-				match(LINE);
-				setState(51);
-				match(LINE);
-				}
-				break;
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(50);
+			match(T__1);
 			}
 		}
 		catch (RecognitionException re) {
@@ -498,25 +467,39 @@ public class GraphxGrammarParser extends Parser {
 			exitRule();
 		}
 		return _localctx;
+	}
+
+	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
+		switch (ruleIndex) {
+		case 1:
+			return lineExpression_sempred((LineExpressionContext)_localctx, predIndex);
+		}
+		return true;
+	}
+	private boolean lineExpression_sempred(LineExpressionContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 0:
+			return precpred(_ctx, 2);
+		}
+		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\79\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\3\2\3\2\6\2\13\n\2\r\2\16\2\f\3\2\7\2\20\n\2\f\2\16\2\23\13"+
-		"\2\3\2\7\2\26\n\2\f\2\16\2\31\13\2\3\2\6\2\34\n\2\r\2\16\2\35\3\2\5\2"+
-		"!\n\2\3\3\3\3\3\3\3\3\6\3\'\n\3\r\3\16\3(\3\4\3\4\3\4\3\4\3\4\3\4\3\4"+
-		"\3\4\3\4\3\4\3\4\3\4\5\4\67\n\4\3\4\2\2\5\2\4\6\2\2\2?\2 \3\2\2\2\4\""+
-		"\3\2\2\2\6\66\3\2\2\2\b\21\5\4\3\2\t\13\7\6\2\2\n\t\3\2\2\2\13\f\3\2\2"+
-		"\2\f\n\3\2\2\2\f\r\3\2\2\2\r\16\3\2\2\2\16\20\5\4\3\2\17\n\3\2\2\2\20"+
-		"\23\3\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22\27\3\2\2\2\23\21\3\2\2\2\24"+
-		"\26\7\6\2\2\25\24\3\2\2\2\26\31\3\2\2\2\27\25\3\2\2\2\27\30\3\2\2\2\30"+
-		"!\3\2\2\2\31\27\3\2\2\2\32\34\7\6\2\2\33\32\3\2\2\2\34\35\3\2\2\2\35\33"+
-		"\3\2\2\2\35\36\3\2\2\2\36!\3\2\2\2\37!\7\3\2\2 \b\3\2\2\2 \33\3\2\2\2"+
-		" \37\3\2\2\2!\3\3\2\2\2\"&\7\3\2\2#$\5\6\4\2$%\7\3\2\2%\'\3\2\2\2&#\3"+
-		"\2\2\2\'(\3\2\2\2(&\3\2\2\2()\3\2\2\2)\5\3\2\2\2*+\7\4\2\2+,\7\3\2\2,"+
-		"-\7\4\2\2-\67\7\5\2\2./\7\4\2\2/\60\7\4\2\2\60\67\7\5\2\2\61\62\7\4\2"+
-		"\2\62\63\7\3\2\2\63\67\7\4\2\2\64\65\7\4\2\2\65\67\7\4\2\2\66*\3\2\2\2"+
-		"\66.\3\2\2\2\66\61\3\2\2\2\66\64\3\2\2\2\67\7\3\2\2\2\t\f\21\27\35 (\66";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\b\67\4\2\t\2\4\3"+
+		"\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\7\2\16\n\2\f\2\16\2\21\13\2\3\2\3\2\3"+
+		"\3\3\3\3\3\3\3\3\3\3\3\5\3\33\n\3\3\3\3\3\5\3\37\n\3\3\3\7\3\"\n\3\f\3"+
+		"\16\3%\13\3\3\4\3\4\5\4)\n\4\3\5\3\5\3\5\3\6\3\6\7\6\60\n\6\f\6\16\6\63"+
+		"\13\6\3\6\3\6\3\6\2\3\4\7\2\4\6\b\n\2\2\2\67\2\17\3\2\2\2\4\24\3\2\2\2"+
+		"\6(\3\2\2\2\b*\3\2\2\2\n-\3\2\2\2\f\16\5\6\4\2\r\f\3\2\2\2\16\21\3\2\2"+
+		"\2\17\r\3\2\2\2\17\20\3\2\2\2\20\22\3\2\2\2\21\17\3\2\2\2\22\23\7\2\2"+
+		"\3\23\3\3\2\2\2\24\25\b\3\1\2\25\26\7\5\2\2\26#\3\2\2\2\27\30\f\4\2\2"+
+		"\30\32\7\6\2\2\31\33\7\5\2\2\32\31\3\2\2\2\32\33\3\2\2\2\33\34\3\2\2\2"+
+		"\34\36\7\6\2\2\35\37\7\7\2\2\36\35\3\2\2\2\36\37\3\2\2\2\37 \3\2\2\2 "+
+		"\"\5\4\3\5!\27\3\2\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$\5\3\2\2\2%#\3\2"+
+		"\2\2&)\5\b\5\2\')\5\4\3\2(&\3\2\2\2(\'\3\2\2\2)\7\3\2\2\2*+\7\5\2\2+,"+
+		"\5\n\6\2,\t\3\2\2\2-\61\7\3\2\2.\60\5\6\4\2/.\3\2\2\2\60\63\3\2\2\2\61"+
+		"/\3\2\2\2\61\62\3\2\2\2\62\64\3\2\2\2\63\61\3\2\2\2\64\65\7\4\2\2\65\13"+
+		"\3\2\2\2\b\17\32\36#(\61";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

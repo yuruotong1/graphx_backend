@@ -61,13 +61,13 @@ public class GraphController {
     public JSONObject getParseResult(@RequestBody String requestDataString) {
         JSONObject requestDataObj = JSON.parseObject(requestDataString);
         String rawData = (String) requestDataObj.get(Constant.RAWDATA);
-        LogUtil.info(LOGGER, "receive data", requestDataObj.toJSONString());
+        LogUtil.info(LOGGER, "receive parse data", requestDataObj.toJSONString());
         CharStream codePointCharStream = CharStreams.fromString(rawData);
         GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
         GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));
         GraphxGrammarParser.StatContext tree = parser.stat();
         JSONObject requestGraphData = requestDataObj.getJSONObject(Constant.JSON_DATA);
-        JSONArray requestNodes = (JSONArray) requestGraphData.get(Constant.NODE_LIST);
+        JSONArray requestNodes = requestGraphData.getJSONArray(Constant.NODE_LIST);
         GraphxVisitor eval = new GraphxVisitor(requestNodes);
         JSONObject res = new JSONObject();
         JSONObject graphData;
@@ -88,6 +88,7 @@ public class GraphController {
         res.put("rawData", rawData);
         String encode = Base64.getUrlEncoder().encodeToString(res.toJSONString().getBytes());
         graphData.put("Base64", encode+Constant.SUFFIX_PNG);
+        LogUtil.info(LOGGER, "return data", res.toJSONString());
         return res;
     }
 
@@ -99,7 +100,6 @@ public class GraphController {
     }
 
     public void getImg(JSONObject requestDataObj, HttpServletResponse response) {
-        LogUtil.info(LOGGER, "receive data", requestDataObj.toJSONString());
         JSONArray edges = requestDataObj.getJSONArray("edgeList");
         JSONArray nodes = requestDataObj.getJSONArray("nodeList");
         File tempDir = TempFile.createDir();
@@ -138,10 +138,8 @@ public class GraphController {
             Edge edge = JSON.parseObject(JSON.toJSONString(edgeObj), Edge.class);
             Node sourceNode = edge.getSourceNode();
             Node targetNode = edge.getTargetNode();
-            String arrow = edge.getType().endsWith("_ARROW") ? Constant.ARROW_NORMAL : Constant.ARROW_NONE;
-            LogUtil.info(LOGGER, "arrow type", arrow);
             String edgeString = GraphvizDot.getName(sourceNode.getId()) + ":f1 -> " + GraphvizDot.getName(targetNode.getId()) +":f1" +
-                    String.format(" [arrowhead=\"%s\" label=\"%s\" fontname=\""+Constant.FONT_SIM_FANG+"\"]", arrow, edge.getText());
+                    String.format(" [arrowhead=\"%s\" label=\"%s\" fontname=\""+Constant.FONT_SIM_FANG+"\"]", edge.getType(), edge.getText());
             edgeDefine.append(edgeString).append("\n");
         }
         String defineNodeEdge = nodeDefine + "\n" + edgeDefine;

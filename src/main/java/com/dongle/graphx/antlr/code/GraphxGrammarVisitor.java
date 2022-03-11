@@ -13,58 +13,41 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface GraphxGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by the {@code statExpr}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Visit a parse tree produced by {@link GraphxGrammarParser#stat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatExpr(GraphxGrammarParser.StatExprContext ctx);
+	T visitStat(GraphxGrammarParser.StatContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code statNewLine}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Visit a parse tree produced by the {@code identifier}
+	 * labeled alternative in {@link GraphxGrammarParser#lineExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatNewLine(GraphxGrammarParser.StatNewLineContext ctx);
+	T visitIdentifier(GraphxGrammarParser.IdentifierContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code node}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Visit a parse tree produced by the {@code expression}
+	 * labeled alternative in {@link GraphxGrammarParser#lineExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNode(GraphxGrammarParser.NodeContext ctx);
+	T visitExpression(GraphxGrammarParser.ExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link GraphxGrammarParser#expr}.
+	 * Visit a parse tree produced by {@link GraphxGrammarParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpr(GraphxGrammarParser.ExprContext ctx);
+	T visitStatement(GraphxGrammarParser.StatementContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code lineStringLineArrow}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
+	 * Visit a parse tree produced by {@link GraphxGrammarParser#structDefile}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLineStringLineArrow(GraphxGrammarParser.LineStringLineArrowContext ctx);
+	T visitStructDefile(GraphxGrammarParser.StructDefileContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code lineLineArrow}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
+	 * Visit a parse tree produced by {@link GraphxGrammarParser#structBody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLineLineArrow(GraphxGrammarParser.LineLineArrowContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lineStringLine}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLineStringLine(GraphxGrammarParser.LineStringLineContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lineLine}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLineLine(GraphxGrammarParser.LineLineContext ctx);
+	T visitStructBody(GraphxGrammarParser.StructBodyContext ctx);
 }

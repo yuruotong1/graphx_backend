@@ -18,97 +18,73 @@ public class GraphxGrammarBaseListener implements GraphxGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatExpr(GraphxGrammarParser.StatExprContext ctx) { }
+	@Override public void enterStat(GraphxGrammarParser.StatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatExpr(GraphxGrammarParser.StatExprContext ctx) { }
+	@Override public void exitStat(GraphxGrammarParser.StatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatNewLine(GraphxGrammarParser.StatNewLineContext ctx) { }
+	@Override public void enterIdentifier(GraphxGrammarParser.IdentifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatNewLine(GraphxGrammarParser.StatNewLineContext ctx) { }
+	@Override public void exitIdentifier(GraphxGrammarParser.IdentifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNode(GraphxGrammarParser.NodeContext ctx) { }
+	@Override public void enterExpression(GraphxGrammarParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNode(GraphxGrammarParser.NodeContext ctx) { }
+	@Override public void exitExpression(GraphxGrammarParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpr(GraphxGrammarParser.ExprContext ctx) { }
+	@Override public void enterStatement(GraphxGrammarParser.StatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpr(GraphxGrammarParser.ExprContext ctx) { }
+	@Override public void exitStatement(GraphxGrammarParser.StatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLineStringLineArrow(GraphxGrammarParser.LineStringLineArrowContext ctx) { }
+	@Override public void enterStructDefile(GraphxGrammarParser.StructDefileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLineStringLineArrow(GraphxGrammarParser.LineStringLineArrowContext ctx) { }
+	@Override public void exitStructDefile(GraphxGrammarParser.StructDefileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLineLineArrow(GraphxGrammarParser.LineLineArrowContext ctx) { }
+	@Override public void enterStructBody(GraphxGrammarParser.StructBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLineLineArrow(GraphxGrammarParser.LineLineArrowContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLineStringLine(GraphxGrammarParser.LineStringLineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLineStringLine(GraphxGrammarParser.LineStringLineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLineLine(GraphxGrammarParser.LineLineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLineLine(GraphxGrammarParser.LineLineContext ctx) { }
+	@Override public void exitStructBody(GraphxGrammarParser.StructBodyContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

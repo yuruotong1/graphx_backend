@@ -10,97 +10,67 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface GraphxGrammarListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by the {@code statExpr}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Enter a parse tree produced by {@link GraphxGrammarParser#stat}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatExpr(GraphxGrammarParser.StatExprContext ctx);
+	void enterStat(GraphxGrammarParser.StatContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code statExpr}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Exit a parse tree produced by {@link GraphxGrammarParser#stat}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatExpr(GraphxGrammarParser.StatExprContext ctx);
+	void exitStat(GraphxGrammarParser.StatContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code statNewLine}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Enter a parse tree produced by the {@code identifier}
+	 * labeled alternative in {@link GraphxGrammarParser#lineExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatNewLine(GraphxGrammarParser.StatNewLineContext ctx);
+	void enterIdentifier(GraphxGrammarParser.IdentifierContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code statNewLine}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Exit a parse tree produced by the {@code identifier}
+	 * labeled alternative in {@link GraphxGrammarParser#lineExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatNewLine(GraphxGrammarParser.StatNewLineContext ctx);
+	void exitIdentifier(GraphxGrammarParser.IdentifierContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code node}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Enter a parse tree produced by the {@code expression}
+	 * labeled alternative in {@link GraphxGrammarParser#lineExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterNode(GraphxGrammarParser.NodeContext ctx);
+	void enterExpression(GraphxGrammarParser.ExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code node}
-	 * labeled alternative in {@link GraphxGrammarParser#stat}.
+	 * Exit a parse tree produced by the {@code expression}
+	 * labeled alternative in {@link GraphxGrammarParser#lineExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitNode(GraphxGrammarParser.NodeContext ctx);
+	void exitExpression(GraphxGrammarParser.ExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GraphxGrammarParser#expr}.
+	 * Enter a parse tree produced by {@link GraphxGrammarParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpr(GraphxGrammarParser.ExprContext ctx);
+	void enterStatement(GraphxGrammarParser.StatementContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GraphxGrammarParser#expr}.
+	 * Exit a parse tree produced by {@link GraphxGrammarParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpr(GraphxGrammarParser.ExprContext ctx);
+	void exitStatement(GraphxGrammarParser.StatementContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code lineStringLineArrow}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
+	 * Enter a parse tree produced by {@link GraphxGrammarParser#structDefile}.
 	 * @param ctx the parse tree
 	 */
-	void enterLineStringLineArrow(GraphxGrammarParser.LineStringLineArrowContext ctx);
+	void enterStructDefile(GraphxGrammarParser.StructDefileContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code lineStringLineArrow}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
+	 * Exit a parse tree produced by {@link GraphxGrammarParser#structDefile}.
 	 * @param ctx the parse tree
 	 */
-	void exitLineStringLineArrow(GraphxGrammarParser.LineStringLineArrowContext ctx);
+	void exitStructDefile(GraphxGrammarParser.StructDefileContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code lineLineArrow}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
+	 * Enter a parse tree produced by {@link GraphxGrammarParser#structBody}.
 	 * @param ctx the parse tree
 	 */
-	void enterLineLineArrow(GraphxGrammarParser.LineLineArrowContext ctx);
+	void enterStructBody(GraphxGrammarParser.StructBodyContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code lineLineArrow}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
+	 * Exit a parse tree produced by {@link GraphxGrammarParser#structBody}.
 	 * @param ctx the parse tree
 	 */
-	void exitLineLineArrow(GraphxGrammarParser.LineLineArrowContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lineStringLine}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineStringLine(GraphxGrammarParser.LineStringLineContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lineStringLine}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineStringLine(GraphxGrammarParser.LineStringLineContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lineLine}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineLine(GraphxGrammarParser.LineLineContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lineLine}
-	 * labeled alternative in {@link GraphxGrammarParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineLine(GraphxGrammarParser.LineLineContext ctx);
+	void exitStructBody(GraphxGrammarParser.StructBodyContext ctx);
 }
