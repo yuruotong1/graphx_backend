@@ -19,21 +19,19 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
 public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphxVisitor.class);
     ArrayList<Edge> edgeList = new ArrayList<>();
-    ArrayList<Node> nodeList = new ArrayList<>();
-
+    JSONArray requestNodeArray;
+    Map<String, Node> nodeMap = new LinkedHashMap<>();
     JSONObject res = new JSONObject();
 
-    public GraphxVisitor(JSONArray requestNodeList) {
-        for (Object requestNodeObj : requestNodeList) {
-            Node requestNode = JSON.parseObject(requestNodeObj.toString(), Node.class);
-            nodeList.add(requestNode);
-        }
+    public GraphxVisitor(JSONArray requestNodeArray) {
+        this.requestNodeArray = requestNodeArray;
     }
 
     @Override
@@ -42,7 +40,7 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
             visit(statementContext);
         }
         res.put("edgeList", edgeList);
-        res.put("nodeList", nodeList);
+        res.put("nodeList", nodeMap.values());
         return res;
     }
 
@@ -78,13 +76,17 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
      * 根据 id 获取 node，若不存在，创建一个 node
      * */
     public Node getNode(String id) {
-        for(Node node: nodeList) {
+        if (nodeMap.containsKey(id)) {
+            return nodeMap.get(id);
+        }
+        for(Object nodeObj: requestNodeArray) {
+            Node node = JSON.parseObject(JSON.toJSONString(nodeObj), Node.class);
             if (node.getId().equals(id)) {
+                nodeMap.put(node.getId(), node);
                 return node;
             }
         }
         return createNode(id);
-
 
     }
 
@@ -124,8 +126,7 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
         res.setText(id);
         res.setSearchPictureName(res.getText());
         res.setAvatar(getSvgFromIconsApi(res.getSearchPictureName()));
-        LogUtil.info(LOGGER, "create node", res.getId(), res.getAvatar());
-        nodeList.add(res);
+        nodeMap.put(res.getId(), res);
         return res;
     }
 
