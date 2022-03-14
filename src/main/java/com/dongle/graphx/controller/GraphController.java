@@ -16,14 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.Base64;
-
-import static com.dongle.graphx.utils.TempFile.deleteDir;
 
 @RestController
 @RequestMapping("/graph")
@@ -31,8 +25,6 @@ public class GraphController {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphController.class);
     @Value("${frontEndAddress}")
     private String frontEndAddress;
-
-
 
     @RequestMapping("/parse")
     @GetMapping
@@ -67,8 +59,11 @@ public class GraphController {
         JSONObject dataObj = decodeBase64Url(data);
         File tempDir = TempFile.createDir();
         JSONObject parseResult = parseData(dataObj.getString(Constant.RAW_DATA), dataObj.getJSONArray(Constant.NODE_LIST), tempDir);
+
         GraphvizDot graphvizDotObj = (GraphvizDot) parseResult.get(Constant.GRAPHVIZ_DOT_OBj);
-        return graphvizDotObj.getPngBytes();
+        byte[] res = graphvizDotObj.getPngBytes();
+        TempFile.deleteDir(tempDir);
+        return res;
     }
 
     @RequestMapping("/parseData")

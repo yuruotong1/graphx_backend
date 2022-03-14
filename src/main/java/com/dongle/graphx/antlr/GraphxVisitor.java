@@ -90,12 +90,19 @@ public class GraphxVisitor extends GraphxGrammarBaseVisitor<Object> {
         edge.setText(edgeText);
         return edge;
     }
-
+    public String visitStructBody(GraphxGrammarParser.StructBodyContext ctx) {
+        StringBuilder res = new StringBuilder();
+        for (GraphxGrammarParser.StatementContext statement : ctx.statement()) {
+            res.append(visitStatement(statement));
+        }
+        return res.toString();
+    }
 
     @Override
-    public Void visitStructDefile(GraphxGrammarParser.StructDefileContext ctx) {
-        System.out.println(123);
-        return null;
+    public String visitStructDefile(GraphxGrammarParser.StructDefileContext ctx) {
+        String structName = ctx.Identifier().getText();
+        String structBody = visitStructBody(ctx.structBody());
+        return graphvizDot.createStruct(structName, structBody);
     }
 
     /*

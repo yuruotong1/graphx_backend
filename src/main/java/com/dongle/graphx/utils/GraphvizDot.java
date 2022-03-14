@@ -72,6 +72,11 @@ public class GraphvizDot {
                 "</TABLE>> fontname=\"" + Constant.FONT_SIM_FANG + "\"]\n";
     }
 
+    public String createStruct(String structName, String structBody) {
+        return String.format("subgraph cluster_%s {\n %s \n}\n", structName, structBody);
+
+    }
+
     public String createEdge(Edge edge) {
         return GraphvizDot.getName(edge.getSourceNode().getId()) + " -> " + GraphvizDot.getName(edge.getTargetNode().getId()) +
                 String.format(" [arrowhead=\"%s\" label=\"%s\" fontname=\"" + Constant.FONT_SIM_FANG + "\"]\n", edge.getType(), edge.getText());
