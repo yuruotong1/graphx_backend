@@ -1,7 +1,6 @@
 package com.dongle.graphx;
 
 import com.dongle.graphx.Dao.NodeDao;
-import com.dongle.graphx.Domain.Node;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

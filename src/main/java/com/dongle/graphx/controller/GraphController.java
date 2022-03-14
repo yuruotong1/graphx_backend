@@ -3,8 +3,6 @@ package com.dongle.graphx.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.dongle.graphx.Domain.Edge;
-import com.dongle.graphx.Domain.Node;
 import com.dongle.graphx.antlr.GraphxVisitor;
 import com.dongle.graphx.antlr.code.GraphxGrammarLexer;
 import com.dongle.graphx.antlr.code.GraphxGrammarParser;
@@ -14,136 +12,121 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
-import static com.dongle.graphx.utils.ConvertSvg2Png.convertHttpSvg2Png;
 import static com.dongle.graphx.utils.TempFile.deleteDir;
 
 @RestController
 @RequestMapping("/graph")
 public class GraphController {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphController.class);
-    @RequestMapping("/parseBase64")
-    @GetMapping
-    public Object getParseBase64Result(@RequestParam(value="data", defaultValue = "") String data,
-                                           @RequestParam(value="type",required=false, defaultValue = "") String type,
-                                           HttpServletResponse response) {
-        LogUtil.info(LOGGER, "string parseBase64", data);
-        if (data.endsWith(Constant.SUFFIX_PNG)) {
-            data = data.substring(0, data.length() - 4);
-            byte[] decode = Base64.getUrlDecoder().decode(data);
-            JSONObject jsonObject = (JSONObject) JSONObject.parse(decode);
-            if (type.equals(Constant.PARSE)) {
-                return jsonObject;
-            } else {
-                getImg((JSONObject) jsonObject.get(Constant.GRAPH_DATA), response);
-                return null;
-            }
-        }else {
-            return new ModelAndView("redirect:"+Constant.FRONT_REDIRECT_URL+data+Constant.SUFFIX_PNG);
-        }
+    @Value("${frontEndAddress}")
+    private String frontEndAddress;
 
-    }
 
 
     @RequestMapping("/parse")
+    @GetMapping
+    public Object getParseResultFromBrowser(@RequestParam(value = "data", defaultValue = "") String data) {
+        LogUtil.info(LOGGER, "string parse", data);
+        return new ModelAndView("redirect:" + frontEndAddress + Constant.FRONT_REDIRECT_URL + data);
+    }
+
+    @RequestMapping("/parseBase64")
+    @GetMapping
+    public Object getParseBase64Result(@RequestParam(value = "data", defaultValue = "") String data) {
+        LogUtil.info(LOGGER, "starting parse base64");
+        if (data.endsWith(Constant.SUFFIX_PNG)) {
+            data = data.substring(0, data.length() - 4);
+        }
+        JSONObject dataObj = decodeBase64Url(data);
+        File tempDir = TempFile.createDir();
+        JSONObject res = packageRes(dataObj.getJSONArray(Constant.NODE_LIST), dataObj.getString(Constant.RAW_DATA));
+        res.put(Constant.RAW_DATA, dataObj.getString(Constant.RAW_DATA));
+        TempFile.deleteDir(tempDir);
+        return res;
+    }
+
+    @RequestMapping(value = "/png", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping
+    @ResponseBody
+    public byte[] getParsePngResult(@RequestParam(value = "data", defaultValue = "") String data) {
+        LogUtil.info(LOGGER, "png", data);
+        if (data.endsWith(Constant.SUFFIX_PNG)) {
+            data = data.substring(0, data.length() - 4);
+        }
+        JSONObject dataObj = decodeBase64Url(data);
+        File tempDir = TempFile.createDir();
+        JSONObject parseResult = parseData(dataObj.getString(Constant.RAW_DATA), dataObj.getJSONArray(Constant.NODE_LIST), tempDir);
+        GraphvizDot graphvizDotObj = (GraphvizDot) parseResult.get(Constant.GRAPHVIZ_DOT_OBj);
+        return graphvizDotObj.getPngBytes();
+    }
+
+    @RequestMapping("/parseData")
     @PostMapping
     public JSONObject getParseResult(@RequestBody String requestDataString) {
         JSONObject requestDataObj = JSON.parseObject(requestDataString);
         String rawData = (String) requestDataObj.get(Constant.RAWDATA);
-        LogUtil.info(LOGGER, "receive parse data", requestDataObj.toJSONString());
-        CharStream codePointCharStream = CharStreams.fromString(rawData);
-        GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
-        GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));
-        GraphxGrammarParser.StatContext tree = parser.stat();
         JSONObject requestGraphData = requestDataObj.getJSONObject(Constant.JSON_DATA);
         JSONArray requestNodes = requestGraphData.getJSONArray(Constant.NODE_LIST);
-        GraphxVisitor eval = new GraphxVisitor(requestNodes);
-        JSONObject res = new JSONObject();
-        JSONObject graphData;
-        try {
-            graphData = (JSONObject) eval.visit(tree);
-        } catch (Exception e) {
-            LogUtil.error(LOGGER, e);
-            res.put("success", false);
-            return res;
-        }
-        if (graphData == null) {
-            res.put("success", false);
-            return res;
-
-        }
-        res.put(Constant.GRAPH_DATA, graphData);
-        res.put("success", true);
-        res.put("rawData", rawData);
-        String encode = Base64.getUrlEncoder().encodeToString(res.toJSONString().getBytes());
-        graphData.put("Base64", encode+Constant.SUFFIX_PNG);
+        LogUtil.info(LOGGER, "receive parse data", requestDataObj.toJSONString());
+        JSONObject res = packageRes(requestNodes, rawData);
         LogUtil.info(LOGGER, "return data", res.toJSONString());
         return res;
     }
 
-
-    @RequestMapping(value = "/getPng", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public void getPargh(@RequestBody String requestDataString, HttpServletResponse response) {
-        JSONObject requestDataObj = JSON.parseObject(requestDataString);
-        getImg(requestDataObj, response);
+    private JSONObject packageRes(JSONArray requestNodes, String rawData) {
+        File tempDir = TempFile.createDir();
+        JSONObject res = new JSONObject();
+        JSONObject parseResult = parseData(rawData, requestNodes, tempDir);
+        GraphvizDot graphvizDotObj = (GraphvizDot) parseResult.get(Constant.GRAPHVIZ_DOT_OBj);
+        res.put(Constant.IMG, graphvizDotObj.getBase64());
+        res.put(Constant.NODE_LIST, parseResult.getJSONArray(Constant.NODE_LIST));
+        res.put(Constant.BASE64, encodeBase64Url(rawData, parseResult.getJSONArray(Constant.NODE_LIST)) + Constant.SUFFIX_PNG);
+        res.put(Constant.SUCCESS, true);
+        TempFile.deleteDir(tempDir);
+        return res;
     }
 
-    public void getImg(JSONObject requestDataObj, HttpServletResponse response) {
-        JSONArray edges = requestDataObj.getJSONArray("edgeList");
-        JSONArray nodes = requestDataObj.getJSONArray("nodeList");
-        File tempDir = TempFile.createDir();
-        Map<String, Object> result = createGraphviz(edges, nodes, tempDir);
-        String base = "digraph G {\n charset=\"UTF-8\" rankdir=\"LR\"\n"+ result.get(Constant.GRAPHVIZ_NODE_EDGE) + "\n}";
+
+    public String encodeBase64Url(String rawData, JSONArray nodeList) {
+        JSONObject data = new JSONObject();
+        data.put(Constant.RAW_DATA, rawData);
+        data.put(Constant.NODE_LIST, nodeList);
+        return Base64.getUrlEncoder().encodeToString(data.toJSONString().getBytes());
+    }
+
+    public JSONObject decodeBase64Url(String base64Data) {
+        byte[] decode = Base64.getUrlDecoder().decode(base64Data);
+        return (JSONObject) JSONObject.parse(decode);
+    }
+
+    public JSONObject parseData(String rawData, JSONArray requestNodes, File tempDir) {
+        GraphvizDot graphvizDot = new GraphvizDot(tempDir);
+        CharStream codePointCharStream = CharStreams.fromString(rawData);
+        GraphxGrammarLexer lexer = new GraphxGrammarLexer(codePointCharStream);
+        GraphxGrammarParser parser = new GraphxGrammarParser(new CommonTokenStream(lexer));
+        GraphxGrammarParser.StatContext tree = parser.stat();
+        GraphxVisitor eval = new GraphxVisitor(requestNodes, graphvizDot);
+        JSONArray nodeArray = new JSONArray();
+        JSONObject res = new JSONObject();
         try {
-            File file = TempFile.createFile(tempDir, "tmp.dot", base);
-            String outPath = tempDir.getPath() + "/outfile.png";
-            String command = "dot -Kdot -Tpng " + file.getAbsolutePath() + " -o " + outPath;
-            Command.run(command);
-            OutputStream outputStream = response.getOutputStream();
-            LogUtil.info(LOGGER, "Run command", command);
-            response.setContentType("image/png");
-            ImageIO.write(ImageIO.read(new File(outPath)), "PNG", outputStream);
-        } catch (IOException e) {
+            JSONObject parseRes = (JSONObject) eval.visit(tree);
+            nodeArray = parseRes.getJSONArray(Constant.NODE_LIST);
+        } catch (Exception e) {
             LogUtil.error(LOGGER, e);
         }
-        deleteDir(tempDir);
-    }
-
-    public Map<String, Object> createGraphviz(JSONArray edges, JSONArray nodes, File tempDir) {
-        Map<String, Object> res = new HashMap<>();
-        StringBuilder nodeDefine = new StringBuilder();
-        for (Object nodeObj : nodes) {
-            Node node = JSON.parseObject(JSON.toJSONString(nodeObj), Node.class);
-            File file = convertHttpSvg2Png(node.getAvatar(), tempDir);
-            assert file != null;
-            String nodeString = GraphvizDot.getName(node.getId()) + " [shape=\"none\", label=<<TABLE BORDER=\"0\" >\n" +
-                    "<TR><TD PORT=\"f1\" FIXEDSIZE=\"TRUE\" WIDTH=\"75\" HEIGHT=\"75\"><IMG  SRC=\"" + file.getAbsolutePath() + "\"/></TD></TR>\n" +
-                    "<TR><TD>" + GraphvizDot.handleSymbol(node.getText()) + "</TD></TR>\n" +
-                    "</TABLE>> fontname=\""+Constant.FONT_SIM_FANG+"\"]";
-            nodeDefine.append(nodeString).append("\n");
-        }
-        StringBuilder edgeDefine = new StringBuilder();
-        for (Object edgeObj : edges) {
-            Edge edge = JSON.parseObject(JSON.toJSONString(edgeObj), Edge.class);
-            Node sourceNode = edge.getSourceNode();
-            Node targetNode = edge.getTargetNode();
-            String edgeString = GraphvizDot.getName(sourceNode.getId()) + ":f1 -> " + GraphvizDot.getName(targetNode.getId()) +":f1" +
-                    String.format(" [arrowhead=\"%s\" label=\"%s\" fontname=\""+Constant.FONT_SIM_FANG+"\"]", edge.getType(), edge.getText());
-            edgeDefine.append(edgeString).append("\n");
-        }
-        String defineNodeEdge = nodeDefine + "\n" + edgeDefine;
-        res.put(Constant.GRAPHVIZ_NODE_EDGE, defineNodeEdge);
+        res.put(Constant.GRAPHVIZ_DOT_OBj, graphvizDot);
+        res.put(Constant.NODE_LIST, nodeArray);
         return res;
     }
 }

@@ -1,4 +1,5 @@
 package com.dongle.graphx.utils;
+
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -39,9 +40,9 @@ public class ConvertSvg2Png {
             FileOutputStream fileOutputStream = new FileOutputStream(pngFile);
             InputStream svgIn = HttpUtil.getInputStream(svgUrl);
             convertSvg2Png(svgIn, fileOutputStream);
-            if(pngFile.exists()) {
+            if (pngFile.exists()) {
                 LogUtil.info(LOGGER, "convert svg to png success", pngFile.getAbsolutePath());
-            }else {
+            } else {
                 LogUtil.error(LOGGER, "convert svg to png error");
             }
             return pngFile;

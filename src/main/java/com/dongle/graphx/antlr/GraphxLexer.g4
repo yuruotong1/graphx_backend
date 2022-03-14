@@ -1,6 +1,8 @@
 lexer grammar GraphxLexer;
 
+
 Identifier : Letter LetterOrDigit*;
+
 
 Line : '-';
 Arrow : '>';

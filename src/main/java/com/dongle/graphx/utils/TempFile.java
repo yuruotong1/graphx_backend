@@ -1,6 +1,8 @@
 package com.dongle.graphx.utils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,7 +23,7 @@ public class TempFile {
     }
 
     public static File createFile(File dir, String fileName, String content) {
-        File file = new File(dir.getAbsolutePath() +"/"+ fileName);
+        File file = new File(dir.getAbsolutePath() + "/" + fileName);
         FileOutputStream fileOutputStream;
         try {
             fileOutputStream = new FileOutputStream(file);

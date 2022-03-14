@@ -14,6 +14,7 @@ public class LogUtil {
         logger.error(errMsg);
 
     }
+
     public static void error(Logger logger, String... msgs) {
         String errMsg = "";
         errMsg += String.join(",", msgs);
