@@ -51,7 +51,7 @@ public class GraphController {
         JSONObject dataObj = decodeBase64Url(data);
         File tempDir = TempFile.createDir();
         JSONObject res = packageRes(dataObj.getJSONArray(Constant.NODE_LIST), dataObj.getString(Constant.RAW_DATA));
-        res.put(Constant.RAW_DATA, dataObj.getString(Constant.RAW_DATA));
+        res.getJSONObject(Constant.GRAPH_DATA).put(Constant.RAW_DATA, dataObj.getString(Constant.RAW_DATA));
         TempFile.deleteDir(tempDir);
         return res;
     }
@@ -89,9 +89,11 @@ public class GraphController {
         JSONObject res = new JSONObject();
         JSONObject parseResult = parseData(rawData, requestNodes, tempDir);
         GraphvizDot graphvizDotObj = (GraphvizDot) parseResult.get(Constant.GRAPHVIZ_DOT_OBj);
-        res.put(Constant.IMG, graphvizDotObj.getBase64());
-        res.put(Constant.NODE_LIST, parseResult.getJSONArray(Constant.NODE_LIST));
-        res.put(Constant.BASE64, encodeBase64Url(rawData, parseResult.getJSONArray(Constant.NODE_LIST)) + Constant.SUFFIX_PNG);
+        JSONObject graphData = new JSONObject();
+        graphData.put(Constant.IMG, graphvizDotObj.getBase64());
+        graphData.put(Constant.NODE_LIST, parseResult.getJSONArray(Constant.NODE_LIST));
+        graphData.put(Constant.BASE64, encodeBase64Url(rawData, parseResult.getJSONArray(Constant.NODE_LIST)) + Constant.SUFFIX_PNG);
+        res.put(Constant.GRAPH_DATA, graphData);
         res.put(Constant.SUCCESS, true);
         TempFile.deleteDir(tempDir);
         return res;
