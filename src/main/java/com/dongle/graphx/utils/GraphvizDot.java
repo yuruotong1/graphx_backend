@@ -73,7 +73,7 @@ public class GraphvizDot {
     }
 
     public String createStruct(String structName, String structBody) {
-        return String.format("subgraph cluster_%s {\n %s \n}\n", structName, structBody);
+        return String.format("subgraph cluster_%s {\n label=%s; \n%s \n}\n", structName,structName, structBody);
 
     }
 
